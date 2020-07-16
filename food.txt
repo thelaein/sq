@@ -1,0 +1,88 @@
+
+
+mysql> use foodorder;
+Database changed
+mysql> select * from menu;
++---------+---------------+-------------+
+| menu_id | name          | description |
++---------+---------------+-------------+
+| 1       | Thai Food     | Good        |
+| 2       | Chinese Food  | Special     |
+| 3       | Japanese Food | Special     |
+| 4       | Inidian Food  | Very good   |
++---------+---------------+-------------+
+4 rows in set (0.00 sec)
+
+mysql> select * from Food;
++---------+-----------------------+-------+---------+
+| food_id | name                  | price | menu_id |
++---------+-----------------------+-------+---------+
+| 1       | Tomyam                | 5000  | 1       |
+| 2       | PapayaSalad           | 2000  | 1       |
+| 3       | FriedNoodle           | 5500  | 2       |
+| 4       | Chinese rice Porridge | 5000  | 2       |
+| 5       | Kung Pao Chicken      | 6000  | 2       |
+| 6       | Ramen                 | 9000  | 3       |
+| 7       | Sushi                 | 9000  | 3       |
+| 8       | Dahi papadi           | 3500  | 4       |
+| 9       | Curry Chicken         | 8000  | 4       |
++---------+-----------------------+-------+---------+
+9 rows in set (0.00 sec)
+
+mysql> select * from Orders;
++----------+------------+------+---------+-------+-------------+
+| order_id | sale_date  | qty  | food_id | price | total_price |
++----------+------------+------+---------+-------+-------------+
+| o1       | 2019-09-30 |    5 | 1       |   200 | 1000        |
+| o2       | 2019-07-22 |    7 | 1       |   200 | 2000        |
+| o3       | 2014-03-21 |    5 | 2       |   100 | 1600        |
+| o4       | 2004-03-12 |    4 | 2       |   400 | 1500        |
+| o5       | 2014-03-11 |    6 | 3       |   300 | 900         |
+| o6       | 2014-12-31 |    3 | 6       |   300 | 1900        |
+| o7       | 2019-12-30 |    8 | 4       |   500 | 100         |
++----------+------------+------+---------+-------+-------------+
+7 rows in set (0.00 sec)
+
+
+mysql> select Food.name,Orders.total_price from Food,Orders where Orders.total_price in (select max(Orders.total_price) from Orders) group by Orders.food_id;
++-----------------------+-------------+
+| name                  | total_price |
++-----------------------+-------------+
+| Chinese rice Porridge | 900         |
++-----------------------+-------------+
+1 row in set (0.02 sec)
+
+
+mysql> select Food.name,Orders.total_price from Food,Orders where Orders.total_price in (select min(Orders.total_price) from Orders) group by Orders.food_id;
++-----------------------+-------------+
+| name                  | total_price |
++-----------------------+-------------+
+| Chinese rice Porridge | 100         |
++-----------------------+-------------+
+1 row in set (0.00 sec)
+
+
+mysql> select Orders.sale_date, sum(Orders.total_price) as sale_amount from Orders group by Orders.sale_date;
++------------+-------------+
+| sale_date  | sale_amount |
++------------+-------------+
+| 2019-09-30 |        1000 |
+| 2019-07-22 |        2000 |
+| 2014-03-21 |        1600 |
+| 2004-03-12 |        1500 |
+| 2014-03-11 |         900 |
+| 2014-12-31 |        1900 |
+| 2019-12-30 |         100 |
++------------+-------------+
+7 rows in set (0.01 sec)
+
+
+mysql> select Orders.sale_date, sum(Orders.total_price) as total from Orders where sale_date between  "2019-07-22" and "2019-12-30";
++------------+-------+
+| sale_date  | total |
++------------+-------+
+| 2019-09-30 |  3100 |
++------------+-------+
+1 row in set (0.01 sec)
+
+mysql>
